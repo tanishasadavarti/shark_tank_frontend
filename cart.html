@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.html">
+    <link rel="stylesheet" href="normalize.css" />
+    <link rel="stylesheet" href="skeleton.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="discription.html">
+</head>
+<body>
+    <div id="mainSection"></div>
+</body>
+<script>
+    function Fetchdata() {
+    fetch("http://localhost:3000/cart").then((res) => res.json())
+        .then((data) => {
+            Cardlist(data)
+            productdata=data
+        })
+        .catch((err) => console.log(err))
+}
+Fetchdata()
+
+
+function Cardlist(data){
+    const store=data.map((el)=>Card(el.id,el.image,el.title,el.price,el.founder,el.category,el.description))
+    document.getElementById("mainSection").innerHTML=store.join("")
+}
+
+function Card(id,image,title,price,founder,category,description){
+    let singlecard=`
+    <div style="display:flex">
+    <div class="card" data-id=${id}>
+        <div class="card-img">
+      <img src=${image} alt="pitch">
+        </div>
+    <div class="card-body">
+      <h4 class="card-title"style="color:black">${title}</h4>
+      <p class="card-founder"style="color:black">Founder:${founder}</p>
+      <p class="card-category"style="color:black">${category}</p>
+      <p class="card-price"style="color:black">${price}</p>
+      <button class="card-button"style="color:white;text-decoration:none;background-color:black;font-weight:bold;border-radius:5px"data-id=${id}>Delete</button>
+    </div>
+  </div>
+  </div>
+  </a>
+    `
+    return singlecard
+}
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("card-button")) {
+        console.log(e.target.dataset.id);
+        deleteProduct(e.target.dataset.id);
+    }
+});
+
+function deleteProduct(id) {
+    fetch(`http://localhost:3000/cart/${id}`, {
+        method: "DELETE"
+    })
+    .then((res) => res.json())
+    .then((data) => {
+        alert("Deleted....");
+        console.log(data);
+    })
+    .catch((err) => console.log(err));
+}
+</script>
+</html>
